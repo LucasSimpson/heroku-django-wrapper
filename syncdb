@@ -1,0 +1,17 @@
+#!/bin/bash
+
+
+BASEDIR="$1"
+SCRIPTS_DIR=$BASEDIR
+PYTHON_SCRIPTS_DIR=$BASEDIR/bin
+
+# read from .hdw_init apps to be migrated
+echo "Migrating apps..."
+
+sed '2;d' .hdw_init
+
+egrep -x "APPS"
+
+
+echo "Done"
+exit 0

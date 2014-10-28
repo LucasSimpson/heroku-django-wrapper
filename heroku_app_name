@@ -6,3 +6,5 @@ PROJECT_DIR="$1"
 
 cd $PROJECT_DIR
 echo $(heroku config | egrep -i -o "([a-z]+-){2}[0-9]{4}")
+
+exit 0

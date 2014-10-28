@@ -5,7 +5,6 @@ PROJECTNAME="$2"
 SCRIPTS_DIR=$BASEDIR
 HEROKU_APP_NAME=
 
-
 if [ -d $PROJECTNAME ]; then
 	echo "deleting site.."
 	cd $PROJECTNAME/$PROJECTNAME
@@ -16,7 +15,7 @@ if [ -d $PROJECTNAME ]; then
 	cd ../..
 	rm -rf $PROJECTNAME
 
-	echo "done"
+	echo "Done"
 	exit 0
 else
 	echo "$PROJECTNAME is not a valid directory"

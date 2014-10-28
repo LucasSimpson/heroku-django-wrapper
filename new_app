@@ -5,13 +5,14 @@ BASEDIR="$1"
 APPNAME="$2"
 SCRIPTS_DIR=$BASEDIR
 PYTHON_SCRIPTS_DIR=$BASEDIR/bin
-PROJECTNAME=$(egrep -i "PROJECT NAME: " .hd_init | awk '{print substr ($0, 15, 999)}')
+PROJECTNAME=$(egrep -i "PROJECT NAME: " .hdw_init | awk '{print substr ($0, 15, 256)}')
+echo "project name is $PROJECTNAME"
 
 
 # starts app and creates index.html for it
 echo "Starting new app.."
 python manage.py startapp $APPNAME
-echo "$APPNAME" >> .hd_init
+echo "$APPNAME" >> .hdw_init
 cd templates
 mkdir $APPNAME
 cd $APPNAME
@@ -19,9 +20,11 @@ touch index.html
 echo "<p>default page for $APPNAME</p>" > index.html
 cd ../..
 
+
 # add the url namespace to master urls.py
 echo "Adding url to urls.py..."
 cd $PROJECTNAME
+echo "CURENT DIR IS $(pwd)"
 if [ $APPNAME = 'auxilary' ]; then
 	python $PYTHON_SCRIPTS_DIR/insert_after_line.py $(pwd)/urls.py "urlpatterns = patterns('',"  "    url(r'', include ('$APPNAME.urls', namespace='$APPNAME')),"
 else
@@ -62,5 +65,5 @@ echo "syncing up with database.."
 python manage.py schemamigration $APPNAME --initial
 python manage.py migrate $APPNAME
 
-echo "done"
+echo "Done"
 exit 0
