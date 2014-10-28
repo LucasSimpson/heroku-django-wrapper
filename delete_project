@@ -5,7 +5,7 @@ PROJECTNAME="$2"
 SCRIPTS_DIR=$BASEDIR
 HEROKU_APP_NAME=
 
-if [ -d $PROJECTNAME ]; then
+if [ -d $PROJECTNAME ] && [ -f $PROJECTNAME/$PROJECTNAME/.hdw_init ]; then
 	echo "deleting site.."
 	cd $PROJECTNAME/$PROJECTNAME
 

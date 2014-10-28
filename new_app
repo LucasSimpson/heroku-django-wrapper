@@ -1,18 +1,28 @@
 #!/bin/bash
 
+if [ ! -f .hdw_init ]; then
+	echo "Not currently in a valid Heroku-Django Wrapper directory."
+	echo "If you have a Heroku-Django Wrapper project, you must be"
+	echo "in ../project_name/project_name to use this command."
+	exit 1
+fi
 
 BASEDIR="$1"
 APPNAME="$2"
 SCRIPTS_DIR=$BASEDIR
 PYTHON_SCRIPTS_DIR=$BASEDIR/bin
 PROJECTNAME=$(egrep -i "PROJECT NAME: " .hdw_init | awk '{print substr ($0, 15, 256)}')
-echo "project name is $PROJECTNAME"
 
+
+# get into virtual env
+cd ..
+source venv/bin/activate
+cd $PROJECTNAME
 
 # starts app and creates index.html for it
 echo "Starting new app.."
 python manage.py startapp $APPNAME
-echo "$APPNAME" >> .hdw_init
+echo "APP: $APPNAME" >> .hdw_init
 cd templates
 mkdir $APPNAME
 cd $APPNAME

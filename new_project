@@ -9,8 +9,6 @@ BASEDIR="$1"
 PROJECTNAME="$2"
 SCRIPTS_DIR=$BASEDIR
 PYTHON_SCRIPTS_DIR=$BASEDIR/bin
-NOTES=
-APP_NAME=
 
 #set up directories and virtual env
 echo "Creating project $PROJECTNAME"
@@ -99,8 +97,7 @@ if not settings.DEBUG:
 echo "Setting up directories and config files..."
 cd ..
 touch .hdw_init
-echo "PROJECT NAME: $PROJECTNAME
-APPS:" >> .hdw_init
+echo "PROJECT NAME: $PROJECTNAME" >> .hdw_init
 mkdir templates
 mkdir static
 mkdir media
@@ -153,7 +150,7 @@ python manage.py syncdb
 
 # creating auxilary app
 echo "Setting up auxilary app..."
-hdw newapp auxilary
+$BASEDIR/new_app auxilary
 
 echo "Done"
 exit 0

@@ -1,17 +1,36 @@
 #!/bin/bash
 
+if [ ! -f .hdw_init ]; then
+	echo "Not currently in a valid Heroku-Django Wrapper directory."
+	echo "If you have a Heroku-Django Wrapper project, you must be"
+	echo "in ../project_name/project_name to use this command."
+	exit 1
+fi
 
 BASEDIR="$1"
 SCRIPTS_DIR=$BASEDIR
 PYTHON_SCRIPTS_DIR=$BASEDIR/bin
+PROJECTNAME=$(egrep -i "PROJECT NAME: " .hdw_init | awk '{print substr ($0, 15, 256)}')
+
+# get into virtual env
+cd ..
+source venv/bin/activate
+cd $PROJECTNAME
+echo "in dir $(pwd) and project name is $PROJECTNAME"
 
 # read from .hdw_init apps to be migrated
 echo "Migrating apps..."
-
-sed '2;d' .hdw_init
-
-egrep -x "APPS"
-
+echo ""
+PREV="test" #impossible to have appname test due to django limitations
+for app in $(cat .hdw_init); do
+	if [ $PREV = "APP:" ]; then
+		echo "Syncing $app..."
+		python manage.py schemamigration $app --auto
+		python manage.py migrate $app
+		echo ""
+	fi
+	PREV=$app
+done
 
 echo "Done"
 exit 0
