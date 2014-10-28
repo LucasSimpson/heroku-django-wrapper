@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# takes in directory of django-heroku project and outputs the heroku app name
+
+PROJECT_DIR="$1"
+
+cd $PROJECT_DIR
+echo $(heroku config | egrep -i -o "([a-z]+-){2}[0-9]{4}")

@@ -1,0 +1,161 @@
+#!/bin/bash
+
+echo "Creating new project.."
+
+#BASEDIR=
+#PROJECTNAME=
+
+BASEDIR="$1"
+PROJECTNAME="$2"
+SCRIPTS_DIR=$BASEDIR
+PYTHON_SCRIPTS_DIR=$BASEDIR/bin
+NOTES=
+APP_NAME=
+
+#set up directories and virtual env
+echo "Creating project $PROJECTNAME"
+mkdir $PROJECTNAME
+cd $PROJECTNAME
+virtualenv venv
+source venv/bin/activate
+pip install Django==1.6.2
+pip install argparse==1.2.1
+pip install dj-database-url==0.3.0
+pip install dj-static==0.0.6
+pip install gunicorn==18.0.0
+pip install psycopg2==2.5.4
+pip install static3==0.5.1
+pip install wsgiref==0.1.2
+pip install django-toolbelt==0.0.1
+pip install South==0.8.4
+#pip install Pillow==2.4.0
+
+
+#creating django project
+echo "Setting up new Django project files..."
+django-admin.py startproject $PROJECTNAME
+cd $PROJECTNAME
+echo "web: gunicorn $PROJECTNAME.wsgi" > Procfile
+cd $PROJECTNAME
+python $PYTHON_SCRIPTS_DIR/insert_after_line.py $(pwd)/settings.py "INSTALLED_APPS = (" "    'south',"
+
+
+# setting up all the settings and stuff
+echo "adding to settings.py.."
+echo "# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+if DEBUG == False:
+    ALLOWED_HOSTS = ['www.$PROJECTNAME.ca']
+else:
+    ALLOWED_HOSTS = ['*']
+
+# Static asset configuration
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = 'staticfiles'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, '../static'),
+)
+
+TEMPLATE_DIRS = (
+    os.path.join (BASE_DIR, '../templates/'),
+)
+
+MEDIA_ROOT = os.path.join (BASE_DIR, '../media/')
+MEDIA_URL = '/media/'" >> settings.py
+
+echo "setting up wsgi.py..."
+echo "import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', '$PROJECTNAME.settings')
+from django.core.wsgi import get_wsgi_application
+from dj_static import Cling
+
+application = Cling(get_wsgi_application())" > wsgi.py
+
+echo "seting up urls.py..."
+echo "from django.conf.urls import patterns, include, url
+from django.contrib import admin
+
+import settings
+
+admin.autodiscover()
+
+urlpatterns = patterns('',
+    # Examples:
+    # url(r'^$', 'jimonation.views.home', name='home'),
+    # url(r'^blog/', include('blog.urls')),
+
+    url(r'^admin/', include(admin.site.urls)),
+    #url(r'^media/(.*)$', 'django.views.static.serve', {'document_root' : settings.MEDIA_ROOT}),
+)
+if not settings.DEBUG:
+    urlpatterns += patterns('',
+        (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
+    )" > urls.py
+
+echo "setting up directories and config files..."
+cd ..
+touch .hd_init
+echo "PROJECT NAME: $PROJECTNAME
+APPS:" >> .hd_init
+mkdir templates
+mkdir static
+mkdir media
+cd templates
+mkdir admin
+cd admin
+
+echo "setting up admin page..."
+echo "{% extends 'admin/base.html' %}
+{% load i18n %}
+
+{% block title %}{{ title }} | {% trans '$PROJECTNAME site admin' %}{% endblock %}
+
+{% block branding %}
+<h1 id='site-name'>{% trans '$PROJECTNAME administration' %}</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}" > base_site.html
+cd ..
+echo "<p>Welcome to $PROJECTNAME </p>" > index.html
+cd ..
+
+
+# create pip requirements
+echo "creating requirements.txt..."
+pip freeze > requirements.txt
+
+# setting up git and .gitignore
+echo "Setting up git..."
+git init
+echo "venv
+*.pyc
+.hd_apps
+staticfiles" > .gitignore
+
+# setting up heroku
+echo "setting up heroku..."
+heroku create
+heroku addons:add heroku-postgresql:dev
+heroku apps:rename $PROJECTNAME
+APP_NAME=$(bash $SCRIPTS_DIR/heroku_app_name $(pwd))
+
+
+# sets up the database
+echo "setting up database..."
+cd $PROJECTNAME
+python $PYTHON_SCRIPTS_DIR/dbsetup.py $(pwd)/settings.py "$(heroku config --app $APP_NAME | grep HEROKU_POSTGRESQL)"
+cd ..
+python manage.py syncdb
+
+# creating auxilary app
+echo "setting up auxilary app..."
+bash hd newapp auxilary
+
+echo "done"
+exit 0
+
+
+

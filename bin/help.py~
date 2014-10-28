@@ -1,0 +1,10 @@
+print ("""Welcome to the Heroku-Django help file!
+	The following commands are available:
+
+	new-project [name of project]
+		-Starts a new project in directory [name of project]. Sets up virutal env, heroku, database; the basics.
+
+	delete-project [name of project]
+		- deletes project from heroku and deletes directory. NOTE [name of project] is directory name, not heroku app name.
+
+""")

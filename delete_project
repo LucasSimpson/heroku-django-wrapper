@@ -1,0 +1,24 @@
+#!/bin/bash
+
+BASEDIR="$1"
+PROJECTNAME="$2"
+SCRIPTS_DIR=$BASEDIR
+HEROKU_APP_NAME=
+
+
+if [ -d $PROJECTNAME ]; then
+	echo "deleting site.."
+	cd $PROJECTNAME/$PROJECTNAME
+
+	HEROKU_APP_NAME=$(bash $SCRIPTS_DIR/heroku_app_name $(pwd))
+	echo "app name is $HEROKU_APP_NAME"
+	heroku apps:destroy -a $HEROKU_APP_NAME --confirm $HEROKU_APP_NAME
+	cd ../..
+	rm -rf $PROJECTNAME
+
+	echo "done"
+	exit 0
+else
+	echo "$PROJECTNAME is not a valid directory"
+	exit 1
+fi

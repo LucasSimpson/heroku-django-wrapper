@@ -1,0 +1,66 @@
+#!/bin/bash
+
+
+BASEDIR="$1"
+APPNAME="$2"
+SCRIPTS_DIR=$BASEDIR
+PYTHON_SCRIPTS_DIR=$BASEDIR/bin
+PROJECTNAME=$(egrep -i "PROJECT NAME: " .hd_init | awk '{print substr ($0, 15, 999)}')
+
+
+# starts app and creates index.html for it
+echo "Starting new app.."
+python manage.py startapp $APPNAME
+echo "$APPNAME" >> .hd_init
+cd templates
+mkdir $APPNAME
+cd $APPNAME
+touch index.html
+echo "<p>default page for $APPNAME</p>" > index.html
+cd ../..
+
+# add the url namespace to master urls.py
+echo "Adding url to urls.py..."
+cd $PROJECTNAME
+if [ $APPNAME = 'auxilary' ]; then
+	python $PYTHON_SCRIPTS_DIR/insert_after_line.py $(pwd)/urls.py "urlpatterns = patterns('',"  "    url(r'', include ('$APPNAME.urls', namespace='$APPNAME')),"
+else
+	python $PYTHON_SCRIPTS_DIR/insert_after_line.py $(pwd)/urls.py "urlpatterns = patterns('',"  "    url(r'^$APPNAME/', include('$APPNAME.urls', namespace='$APPNAME')),"
+fi
+cd ..
+
+
+# set up apps urls.py...
+echo "Setting up index url..."
+cd $APPNAME
+echo "from django.conf.urls import patterns, url
+
+from $APPNAME import views
+
+urlpatterns = patterns ('',
+	url (r'^$', views.index, name='index'),
+)" > urls.py
+
+
+# set up views.py
+echo "Setting up base app view..."
+echo "from django.shortcuts import render
+
+def index (request):
+	return render (request, '$APPNAME/index.html', None)" > views.py
+cd ..
+
+
+# add app to installed apps in settings.py
+echo "Adding app to settings.py..."
+cd $PROJECTNAME
+python $PYTHON_SCRIPTS_DIR/insert_after_line.py $(pwd)/settings.py "INSTALLED_APPS = (" "    '$APPNAME',"
+cd ..
+
+# initial migrate for database
+echo "syncing up with database.."
+python manage.py schemamigration $APPNAME --initial
+python manage.py migrate $APPNAME
+
+echo "done"
+exit 0
