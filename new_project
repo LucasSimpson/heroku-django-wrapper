@@ -150,7 +150,7 @@ python manage.py syncdb
 
 # creating auxilary app
 echo "Setting up auxilary app..."
-$BASEDIR/new_app auxilary
+$BASEDIR/hdw newapp auxilary
 
 echo "Done"
 exit 0
