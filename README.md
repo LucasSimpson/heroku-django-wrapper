@@ -4,24 +4,25 @@
 Heroku-Django-Wrapper is a collection of scripts that makes creating a django project hosted on Heroku a whole bunch easier.
 A list of commands can be found lower under 'Help File'.
 
-There are a few key differences between a regular Django projec and a Heroku-Django-Wrapper project. First and foremost is the directory structure. It is as follows:
-PROJECTNAME
-    venv
-    PROJECTNAME
-        static
-        _static
-        templates
-        _templates
-            includes
-        media
-        PROJECTNAME
-        auxilary
-        manage.py
-        Procfile
-        .git
-        .gitignore
-        .hdw_init
-        requirements.txt
+There are a few key differences between a regular Django projec and a Heroku-Django-Wrapper project. First and foremost is the directory structure. 
+The directory structure is as follows:
+    [projectname]
+        venv
+        [projectname]
+            static
+            _static
+            templates
+            _templates
+                includes
+            media
+            [projectname]
+            auxilary
+            manage.py
+            Procfile
+            .git
+            .gitignore
+            .hdw_init
+            requirements.txt
 
 What they all are:
     venv
@@ -31,20 +32,21 @@ What they all are:
         Working static folder. Site will fetch css/js files from here.
 
     _static
-        Folder for base css/cscc/js files. cscc will be built from here, and copied to static along with
-        any other css and js files.
+        Folder for base css/cscc/js files. cscc will be built from here, 
+        and copied to static along with any other css and js files.
 
     templates
         Working templates folder. Site will fetch html files from here. 
 
     _templates
-        This is where all base html files are found. Includes will be built from here, and copied
-        with any other html files.
+        This is where all base html files are found. Includes will be built 
+        from here, and copied with any other html files.
 
     includes
-        This is where any blocks of html can be found. In any html file in _templates, you can use
-        the tag {% include [filename] %}, and when the site is built the contents of [filename] will
-        be copied into the html file, replaces the {% include %} tag.
+        This is where any blocks of html can be found. In any html file 
+        in _templates, you can use the tag {% include [filename] %}, and 
+        when the site is built the contents of [filename] will be copied
+        into the html file, replaces the {% include %} tag.
 
     media
         Working directory for media files. This includes all pictures/videos/music.
@@ -78,12 +80,9 @@ What they all are:
 ###Things to note/TL;DR
 _static and _templates folder are where you should put all static/html files. When hdw build is called, all contents will be copied over into the working directories, _static and _templates. This is to keep the includes and lass files in seperate directories while still keeping things simple.
 
-Any file in templates may include a {% include [filename] %} tag. When hdw build is called, all html files will be scanned for a tag like this. Whenever a tag is found, the following happens:
+Any file in templates may include a {% include [filename] %} tag. When hdw build is called, all html files will be scanned for a tag like this. Whenever a tag is found, [filename] is searched for inside the includes directory. if [filename] is found, the include tag is deleted and replaced with the contents of [filename]
 
-    [filename] is search for inside the includes directory.
-    if [filename] is found, the include tag is deleted and replaced with the contents of [filename]
-
-html inside the includes directory may NOT use this tag.
+Note that html inside the includes directory may NOT use this tag.
 
 * * *
 
@@ -103,7 +102,7 @@ The following commands are available:
 
 Project specific commands:
     *These commands must be used inside project directory,
-     specifically ../[projec name]/[projectname]
+     specifically ..../[projectname]/[projectname]
 
     newapp [name of app]
         - creates a new app [name of app] in directory
