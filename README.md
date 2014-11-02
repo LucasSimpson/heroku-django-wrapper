@@ -6,6 +6,7 @@ A list of commands can be found lower under 'Help File'.
 
 There are a few key differences between a regular Django projec and a Heroku-Django-Wrapper project. First and foremost is the directory structure. 
 The directory structure is as follows:
+
     [projectname]
         venv
         [projectname]
@@ -25,6 +26,7 @@ The directory structure is as follows:
             requirements.txt
 
 What they all are:
+
     venv
         This is the directory of the virtualenv used for this project.
 
