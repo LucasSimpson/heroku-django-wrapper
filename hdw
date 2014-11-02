@@ -5,14 +5,23 @@ BASEDIR=~/bin/heroku-django
 
 if [ "$1" = "create" ]; then
 	$BASEDIR/new_project $BASEDIR $2
+
 elif [ "$1" = "delete" ]; then
 	$BASEDIR/delete_project $BASEDIR $2
+
 elif [ "$1" = "newapp" ]; then
 	$BASEDIR/new_app $BASEDIR $2
+
 elif [ "$1" = "syncdb" ]; then
 	$BASEDIR/syncdb $BASEDIR
+
+elif [ "$1" = "build" ]; then
+	$BASEDIR/build $BASEDIR
+
 elif [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
 	python $BASEDIR/bin/help.py
+
 fi
+
 
 exit 0

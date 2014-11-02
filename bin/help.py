@@ -20,4 +20,17 @@ Project specific commands:
 		  [name of app]. Updates urls.py and settings.py 
 		  accordingly.
 
+	syncdb
+		- migrates all apps with using south.
+		  Applies any changes that have been made to the
+		  app model.
+
+	build
+		- Copies contents of _static, processes Lass files,
+		  and copies it all to static. 
+		- Copies contents of _templates, processes any
+		  includes, and copies it all to templates
+		Please note that any contents of _static and _templates
+		are deleted and overwritten.
+
 """)

@@ -23,7 +23,7 @@ cd $PROJECTNAME
 echo "Starting new app.."
 python manage.py startapp $APPNAME
 echo "APP: $APPNAME" >> .hdw_init
-cd templates
+cd _templates
 mkdir $APPNAME
 cd $APPNAME
 touch index.html
@@ -75,5 +75,5 @@ echo "syncing up with database.."
 python manage.py schemamigration $APPNAME --initial
 python manage.py migrate $APPNAME
 
-echo "Done"
+echo "Finished making $APPNAME"
 exit 0

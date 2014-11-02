@@ -15,7 +15,7 @@ if [ -d $PROJECTNAME ] && [ -f $PROJECTNAME/$PROJECTNAME/.hdw_init ]; then
 	cd ../..
 	rm -rf $PROJECTNAME
 
-	echo "Done"
+	echo "Finished deleting project."
 	exit 0
 else
 	echo "$PROJECTNAME is not a valid directory"

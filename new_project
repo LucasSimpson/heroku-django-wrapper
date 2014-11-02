@@ -1,14 +1,19 @@
 #!/bin/bash
 
-echo "Creating new project.."
-
-#BASEDIR=
-#PROJECTNAME=
 
 BASEDIR="$1"
 PROJECTNAME="$2"
 SCRIPTS_DIR=$BASEDIR
 PYTHON_SCRIPTS_DIR=$BASEDIR/bin
+
+if [ ! "$(echo "$PROJECTNAME" | egrep -i -o "[a-z0-9]+")" = "$PROJECTNAME" ]; then
+    echo "Porject name $PROJECTNAME is invalid."
+    echo "We regret to inform you that project names"
+    echo "are currently limited to alphenumeric"
+    echo "characters only."
+    exit 1
+fi
+
 
 #set up directories and virtual env
 echo "Creating project $PROJECTNAME"
@@ -94,14 +99,16 @@ if not settings.DEBUG:
     )" > urls.py
 
 
+# creating _static/media/_templates directories and working directories
 echo "Setting up directories and config files..."
 cd ..
 touch .hdw_init
 echo "PROJECT NAME: $PROJECTNAME" >> .hdw_init
-mkdir templates
-mkdir static
 mkdir media
-cd templates
+cp -r $BASEDIR/bootstrap-3.2.0-dist _static
+mkdir _templates
+cd _templates
+mkdir includes
 mkdir admin
 cd admin
 
@@ -131,7 +138,9 @@ git init
 echo "venv
 *.pyc
 .hdw_init
-staticfiles" > .gitignore
+_static
+_templates" > .gitignore
+
 
 # setting up heroku
 echo "Setting up heroku..."
@@ -148,11 +157,22 @@ python $PYTHON_SCRIPTS_DIR/dbsetup.py $(pwd)/settings.py "$(heroku config --app 
 cd ..
 python manage.py syncdb
 
+
 # creating auxilary app
 echo "Setting up auxilary app..."
 $BASEDIR/hdw newapp auxilary
 
-echo "Done"
+
+#building iste
+echo "Building..."
+$BASEDIR/hdw build
+
+
+#initial commit
+git add --all
+git commi -m 'First commit. Everything here is script-generated.'
+
+echo "Finihsed creating new project."
 exit 0
 
 
