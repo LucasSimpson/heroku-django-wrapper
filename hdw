@@ -19,7 +19,7 @@ elif [ "$1" = "build" ]; then
 	$BASEDIR/build $BASEDIR
 
 elif [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-	python $BASEDIR/bin/help.py
+	$BASEDIR/help $BASEDIR
 
 fi
 

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+BASEDIR="$1"
+
+sed -n '/###Help File/,$p' $BASEDIR/README.md
