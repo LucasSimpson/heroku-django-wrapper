@@ -35,12 +35,14 @@ for file in $(find -follow | egrep -i "(.*?).html$"); do
 	for include in $(egrep -i -o "\{% include '(.*?).html' %\}" $file); do
 		INCLUDE_FILENAME=$(echo "$include" | egrep -i -o "'(.*?).html" | awk '{print substr($0, 2, 256)}')
 		if [ -f $INCLUDEDIR/$INCLUDE_FILENAME ]; then
-			cat $TEMPLATEDIR/$SOURCE_FILENAME | sed "s:{\% include $include \%}:cat $INCLUDEDIR/$INCLUDE_FILENAME):" > $NEWTEMPLATEDIR/$SOURCE_FILENAME
+			cat $TEMPLATEDIR/$SOURCE_FILENAME | sed "s:{\% include $include \%}:$(cat $INCLUDEDIR/$INCLUDE_FILENAME):" > $NEWTEMPLATEDIR/$SOURCE_FILENAME
 		elif [ ! -f $INCLUDEDIR/$INCLUDE_FILENAME ] && [ ! -z "$INCLUDE_FILENAME" ]; then
 			echo "File $INCLUDE_FILENAME not found in includes directory. Error from file $file"
 		fi
 	done
 done
+
+#deleting includes folder from working templates directory
 cd ../templates
 rm -rf includes
 cd ..

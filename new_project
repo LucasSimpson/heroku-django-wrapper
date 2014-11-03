@@ -170,7 +170,7 @@ $BASEDIR/hdw build
 
 #initial commit
 git add --all
-git commi -m 'First commit. Everything here is script-generated.'
+git commit -m 'First commit. Everything here is script-generated.'
 
 echo "Finihsed creating new project."
 exit 0
