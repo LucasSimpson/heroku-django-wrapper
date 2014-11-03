@@ -82,9 +82,10 @@ What they all are:
 ###Things to note/TL;DR
 _static and _templates folder are where you should put all static/html files. When hdw build is called, all contents will be copied over into the working directories, _static and _templates. This is to keep the includes and lass files in seperate directories while still keeping things simple.
 
-Any file in templates may include a {% include [filename] %} tag. When hdw build is called, all html files will be scanned for a tag like this. Whenever a tag is found, [filename] is searched for inside the includes directory. if [filename] is found, the include tag is deleted and replaced with the contents of [filename]
+Any file in templates may include a {% include 'filename' %} tag. When hdw build is called, all html files will be scanned for a tag like this. Whenever a tag is found, [filename] is searched for inside the includes directory. if [filename] is found, the include tag is deleted and replaced with the contents of [filename]
 
 Note that html inside the includes directory may NOT use this tag.
+Note that single quotes be used.
 
 * * *
 

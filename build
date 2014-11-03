@@ -8,22 +8,42 @@ if [ ! -f .hdw_init ]; then
 fi
 
 BASEDIR="$1"
-SCRIPTS_DIR=$BASEDIR
-PYTHON_SCRIPTS_DIR=$BASEDIR/bin
 PROJECTNAME=$(egrep -i "PROJECT NAME: " .hdw_init | awk '{print substr ($0, 15, 256)}')
+TEMPLATEDIR=$(pwd)/_templates
+NEWTEMPLATEDIR=$(pwd)/templates
+INCLUDEDIR=$TEMPLATEDIR/includes
 
+echo "Building..."
 
 #removing previous static and templates directories...
-echo "deleteting previous..."
-rm -r -f -q static
-rm -r -f -q templates
+rm -r -f static
+rm -r -f templates
 
 
-#currently only copies because I haven't implemented aything else yet
-echo "copying over files..."
+#copy files over
 cp -r _static static
 cp -r _templates templates
 
+
+# replace include tags in html files
+INCLUDE_FILENAME=
+SOURCE_FILENAME=
+cd _templates
+for file in $(find -follow | egrep -i "(.*?).html$"); do
+	SOURCE_FILENAME=$(echo "$file" | awk '{print substr ($0, 3, 256)}')
+
+	for include in $(egrep -i -o "\{% include '(.*?).html' %\}" $file); do
+		INCLUDE_FILENAME=$(echo "$include" | egrep -i -o "'(.*?).html" | awk '{print substr($0, 2, 256)}')
+		if [ -f $INCLUDEDIR/$INCLUDE_FILENAME ]; then
+			cat $TEMPLATEDIR/$SOURCE_FILENAME | sed "s:{\% include $include \%}:cat $INCLUDEDIR/$INCLUDE_FILENAME):" > $NEWTEMPLATEDIR/$SOURCE_FILENAME
+		elif [ ! -f $INCLUDEDIR/$INCLUDE_FILENAME ] && [ ! -z "$INCLUDE_FILENAME" ]; then
+			echo "File $INCLUDE_FILENAME not found in includes directory. Error from file $file"
+		fi
+	done
+done
+cd ../templates
+rm -rf includes
+cd ..
 
 echo "Finished building."
 exit 0
