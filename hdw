@@ -18,8 +18,14 @@ elif [ "$1" = "syncdb" ]; then
 elif [ "$1" = "build" ]; then
 	$BASEDIR/build $BASEDIR
 
+elif [ "$1" = "runserver" ]; then
+	$BASEDIR/runserver $BASEDIR
+
 elif [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
 	$BASEDIR/help $BASEDIR
+
+else
+	echo "Command not reconized."
 
 fi
 

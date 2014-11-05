@@ -9,9 +9,14 @@ fi
 
 BASEDIR="$1"
 PROJECTNAME=$(egrep -i "PROJECT NAME: " .hdw_init | awk '{print substr ($0, 15, 256)}')
+
 TEMPLATEDIR=$(pwd)/_templates
 NEWTEMPLATEDIR=$(pwd)/templates
 INCLUDEDIR=$TEMPLATEDIR/includes
+
+STATICDIR=$(pwd)/_static
+NEWSTATICDIR=$(pwd)/static
+
 
 echo "Building..."
 
@@ -28,7 +33,7 @@ cp -r _templates templates
 # replace include tags in html files
 INCLUDE_FILENAME=
 SOURCE_FILENAME=
-cd _templates
+cd $TEMPLATEDIR
 for file in $(find -follow | egrep -i "(.*?).html$"); do
 	SOURCE_FILENAME=$(echo "$file" | awk '{print substr ($0, 3, 256)}')
 
@@ -43,9 +48,29 @@ for file in $(find -follow | egrep -i "(.*?).html$"); do
 done
 
 #deleting includes folder from working templates directory
-cd ../templates
+cd $NEWTEMPLATEDIR
 rm -rf includes
 cd ..
+
+
+# compiling sass files
+DESTINATION=
+cd $STATICDIR
+for file in $(find -follow | egrep -i "(.*?).scss$"); do
+	SOURCE_FILENAME=$(echo "$file" | awk '{print substr ($0, 3, 256)}')
+	DESTINATION=$(echo "$SOURCE_FILENAME" | rev | awk '{print substr ($0, 6, 256)}' | rev)
+	sass $SOURCE_FILENAME $NEWSTATICDIR/$DESTINATION.css
+done
+
+# deleting scss files in working static 
+cd $NEWSTATICDIR
+for file in $(find -follow | egrep -i "(.*?).scss$"); do
+	rm $file
+done
+for file in $(find -follow | egrep -i "(.*?).map$"); do
+	rm $file
+done
+
 
 echo "Finished building."
 exit 0
